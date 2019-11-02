@@ -1,10 +1,10 @@
 #include <stdio.h>
 
 #define N 4
+#define NUM (N * N + 1) * N / 2
 
 void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, int start);
 int check(int ms[N * N]);
-
 
 int main(void)
 {
@@ -44,9 +44,47 @@ void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, 
         for (i = start; i < number; i++) {
             swap(list[start], list[i]);
             ms[zero_entry[start]] = list[start];
-            if (check_row(ms) && check_col(ms) && check_diagonal(ms)
+            if (check(ms) == 1)
                 find_ms(ms, zero_entry, list, number, start + 1);
             swap(list[start], list[i]);
         }
     }
 }
+
+int check(int ms[N * N]) {
+    int i, j;
+    int valid;
+    int sum;
+    
+    //check row
+    for (i = 0, valid = 1; i < N && valid == 1; i++) {
+        for (j = 0, sum = 0; j < N; j++) 
+            sum += ms[i * N + j];
+        if (sum > NUM)
+            valid = 0;
+    }
+    if (valid == 0)
+        return 0;
+
+    // check column
+    for (i = 0, valid = 1; i < N && valid == 1; i++) {
+        for (j = 0, sum = 0; j < N; j++) 
+            sum += ms[j * N + i];
+        if (sum > NUM)
+            valid = 0;
+    }
+    if (valid == 0)
+        return 0;
+
+    // check diagonal
+    for (i = 0, sum = 0; i < N; i++)
+        sum += ms[i + i * N];
+    if (sum > NUM)
+        return 0;
+   
+    for (i = 0, sum = 0; i < N; i++)
+        sum += ms[(N - 1) * (i + 1)];
+    if (sum > NUM)
+        return 0;
+    return 1;
+} 
