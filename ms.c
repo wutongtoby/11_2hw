@@ -71,34 +71,28 @@ void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, 
     }
 }
 
-int check(int ms[N * N]) 
-{
+int check(int ms[N * N]) {
     int i, j;
+    int valid;
     int sum;
     int has_zero;
-    
+
     //check row
-    for (i = 0; i < N; i++) {
-        for (j = 0, has_zero = 0, sum = 0; j < N; j++) { 
+    for (i = 0, valid = 1; i < N && valid == 1; i++) {
+        for (j = 0, sum = 0; j < N; j++) 
             sum += ms[i * N + j];
-            if (ms[i * N + j] == 0)
-                has_zero = 1;
-        }
-        if (has_zero == 0 && (sum != NUM) || sum > NUM)
+        if (sum > N * (N * N + 1) / 2)
             return 0;
     }
-
 
     // check column
-    for (i = 0; i < N; i++) {
-        for (j = 0, has_zero = 0, sum = 0; j < N; j++) {
+    for (i = 0, valid = 1; i < N && valid == 1; i++) {
+        for (j = 0, sum = 0; j < N; j++) 
             sum += ms[j * N + i];
-            if (ms[j * N + i] == 0)
-                has_zero == 1;
-        }
-        if (has_zero == 0 && (sum != NUM) || sum > NUM)
+        if (sum > N * (N * N + 1) / 2)
             return 0;
     }
+  
 
     // check diagonal
     for (i = 0, has_zero = 0, sum = 0; i < N; i++) {
@@ -106,18 +100,18 @@ int check(int ms[N * N])
         if (ms[i + i * N] == 0)
             has_zero = 1;
     }
-    if (has_zero == 0 && (sum != NUM) || sum > NUM)
-            return 0;
+    if (sum > N * (N * N + 1) / 2 || has_zero == 0 && sum != NUM)
+        return 0;
    
-    for (i = 0, has_zero = 0, sum = 0; i < N; i++) {
+    for (i = 0, sum = 0; i < N; i++) {
         sum += ms[(N - 1) * (i + 1)];
         if (ms[(N - 1) * (i + 1)] == 0)
             has_zero = 1;
     }
-    if (has_zero == 0 && (sum != NUM) || sum > NUM)
-            return 0;
+   if (sum > N * (N * N + 1) / 2 || has_zero == 0 && sum != NUM)
+        return 0;
     return 1;
-} 
+}
 
 void print(int ms[N * N],int length) 
 {
