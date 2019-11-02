@@ -4,7 +4,7 @@
 #define NUM (N * N + 1) * N / 2
 int sol = 0;
 int k = 0;
-void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, int start);
+void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int start, int end);
 int check(int ms[N * N]);
 void print(int ms[N * N], int length);
 
@@ -13,7 +13,7 @@ int main(void)
     int i, j; // loop index
     int ms[N * N]; // to  read in the data
     int zero_entry[N * N]; // record the place that is empty at first
-    int record[N * N];
+    int record[N * N]; // to record which number did appear
     int list[N * N]; // the list of numbers that used to fill in the ms
 
     for (i = 0; i < N * N; i++)
@@ -31,37 +31,34 @@ int main(void)
         }
     // then j will means the total number of nonzero entries
 
-    find_ms(ms, zero_entry, list, j, 0);
-    printf("sol is %d\n", sol);
+    find_ms(ms, zero_entry, list,0, j);
+    printf("Toltal number of solutions is %d\n", sol);
     return 0;
 }
 
 
-void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, int start)
+void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int start, int end)
 {
     int i, j; // loop index
     int temp;
 
-    if (number == start) {
-       print(ms, N * N);
+    if (start == end) {
+        printf("Solution: %d\n", ++sol);
+        print(ms, N * N);
         printf("\n");
-       sol++;
     }
     else  {
-        for (i = start; i < number; i++) {
+        for (i = start; i < end; i++) {
             // swap list[i] and list[start]
             temp = list[start];
             list[start] = list[i];
             list[i] = temp;
-            //printf("XXX%dXXX\n", k++);
-            //printf("start: %d, number: %d\n", start, number);
-            //print(list, 5);
-            //printf("\n");
+    
             ms[zero_entry[start]] = list[start];
-            //print(ms, N * N);
             
-            if (check(ms) == 1)
-                find_ms(ms, zero_entry, list, number, start + 1);
+            if (check(ms) == 1) // if after filling in is still valid, fill the next in
+                find_ms(ms, zero_entry, list, start + 1, end);
+            
             // swap list[i] and list[start]
             temp = list[start];
             list[start] = list[i];
@@ -71,47 +68,55 @@ void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, 
     }
 }
 
-int check(int ms[N * N]) {
+int check(int ms[N * N]) 
+{
     int i, j;
-    int valid;
     int sum;
     int has_zero;
-
+    
     //check row
-    for (i = 0, valid = 1; i < N && valid == 1; i++) {
-        for (j = 0, sum = 0; j < N; j++) 
+    for (i = 0; i < N; i++) {
+        for (j = 0, has_zero = 0, sum = 0; j < N; j++) { 
             sum += ms[i * N + j];
-        if (sum > N * (N * N + 1) / 2)
+            if (ms[i * N + j] == 0)
+                has_zero = 1;
+        }
+        if ((has_zero == 0 && sum != NUM) || sum > NUM)
             return 0;
     }
+
 
     // check column
-    for (i = 0, valid = 1; i < N && valid == 1; i++) {
-        for (j = 0, sum = 0; j < N; j++) 
+    for (i = 0; i < N; i++) {
+        for (j = 0, has_zero = 0, sum = 0; j < N; j++) {
             sum += ms[j * N + i];
-        if (sum > N * (N * N + 1) / 2)
+            if (ms[j * N + i] == 0)
+                has_zero = 1;
+        }
+        if ((has_zero == 0 && sum != NUM) || sum > NUM)
             return 0;
     }
-  
 
-    // check diagonal
+    // check major diagonal
     for (i = 0, has_zero = 0, sum = 0; i < N; i++) {
         sum += ms[i + i * N];
         if (ms[i + i * N] == 0)
             has_zero = 1;
     }
-    if (sum > N * (N * N + 1) / 2 || has_zero == 0 && sum != NUM)
-        return 0;
-   
-    for (i = 0, sum = 0; i < N; i++) {
+    if ((has_zero == 0 && sum != NUM) || sum > NUM)
+            return 0;
+    
+    // check minor diagonal
+    for (i = 0, has_zero = 0, sum = 0; i < N; i++) {
         sum += ms[(N - 1) * (i + 1)];
         if (ms[(N - 1) * (i + 1)] == 0)
             has_zero = 1;
     }
-   if (sum > N * (N * N + 1) / 2 || has_zero == 0 && sum != NUM)
-        return 0;
+    if ((has_zero == 0 && sum != NUM) || sum > NUM)
+            return 0;
+    // if col + row + diagonal is okay then is okay
     return 1;
-}
+} 
 
 void print(int ms[N * N],int length) 
 {
