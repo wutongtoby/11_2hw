@@ -2,7 +2,7 @@
 
 #define N 4
 #define NUM (N * N + 1) * N / 2
-int k = 0;
+int sol = 0;
 void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, int start);
 int check(int ms[N * N]);
 void print(int ms[N * N], int length);
@@ -22,16 +22,19 @@ int main(void)
         if (ms[i] == 0) 
             zero_entry[j++] = i; // means the ith entries is empty
         else
-            record[ms[i]] = 1; // means the ms[i] entry has showed up
+            record[ms[i] - 1] = 1; // means the ms[i] entry has showed up
     }
     for (i = 0, j = 0; i < N * N; i++)
-        if (record[i] == 0) // i did't show up
+        if (record[i] == 0) {// i did't show up 
             list[j++] = i + 1;
-
+            printf("%d ", list[j - 1]);
+        }
+    printf("\n");
     // then j will means the total number of nonzero entries
-
+    //print(list, N * N);
     find_ms(ms, zero_entry, list, j - 1, 0);
-
+    
+    printf("solution is %d\n", sol);
     return 0;
 }
 
@@ -41,20 +44,18 @@ void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, 
     int i, j; // loop index
     int temp;
 
-    if (number == start)
+    if (number == start) {
        print(ms, N * N);
+        sol++;
+    }
     else  {
         for (i = start; i < number; i++) {
             // swap list[i] and list[start]
             temp = list[start];
             list[start] = list[i];
             list[i] = temp;
-            printf("XXX%dXXX\n", k++);
-            printf("start: %d, number: %d\n", start, number);
-            print(list, 8);
-            printf("\n");
+            
             ms[zero_entry[start]] = list[start];
-            print(ms, N * N);
             
             if (check(ms) == 1)
                 find_ms(ms, zero_entry, list, number, start + 1);
@@ -63,7 +64,6 @@ void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, 
             list[start] = list[i];
             list[i] = temp;
         }
-        ms[zero_entry[start]] = 0;
     }
 }
 
@@ -114,4 +114,5 @@ void print(int ms[N * N],int length)
         if ((i + 1)% N  == 0)
             printf("\n");
     }
+    printf("\n");
 }
