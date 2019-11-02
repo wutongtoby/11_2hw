@@ -2,11 +2,11 @@
 
 #define N 4
 #define NUM (N * N + 1) * N / 2
+
 int sol = 0;
-int k = 0;
 void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int start, int end);
 int check(int ms[N * N]);
-void print(int ms[N * N], int length);
+void print(int ms[N * N]);
 
 int main(void)
 {
@@ -36,15 +36,14 @@ int main(void)
     return 0;
 }
 
-
 void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int start, int end)
 {
-    int i, j; // loop index
+    int i; // loop index
     int temp;
 
     if (start == end) {
         printf("Solution: %d\n", ++sol);
-        print(ms, N * N);
+        print(ms);
         printf("\n");
     }
     else  {
@@ -54,7 +53,7 @@ void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int start, i
             list[start] = list[i];
             list[i] = temp;
     
-            ms[zero_entry[start]] = list[start];
+            ms[zero_entry[start]] = list[start]; // fill in the number
             
             if (check(ms) == 1) // if after filling in is still valid, fill the next in
                 find_ms(ms, zero_entry, list, start + 1, end);
@@ -118,10 +117,10 @@ int check(int ms[N * N])
     return 1;
 } 
 
-void print(int ms[N * N],int length) 
+void print(int ms[N * N]) 
 {
     int i;
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < N * N; i++) {
         printf("%4d", ms[i]);
         if ((i + 1)% N  == 0)
             printf("\n");
