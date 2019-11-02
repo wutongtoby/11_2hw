@@ -2,14 +2,14 @@
 
 #define N 4
 #define NUM (N * N + 1) * N / 2
-
+int k = 0;
 void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, int start);
 int check(int ms[N * N]);
+void print(int ms[N * N], int length);
 
 int main(void)
 {
     int i, j; // loop index
-    int number; // the total number of numbers needed to filled in
     int ms[N * N]; // to  read in the data
     int zero_entry[N * N]; // record the place that is empty at first
     int record[N * N];
@@ -26,10 +26,11 @@ int main(void)
     }
     for (i = 0, j = 0; i < N * N; i++)
         if (record[i] == 0) // i did't show up
-            list[j++] = i;
-    j = number;
+            list[j++] = i + 1;
+
     // then j will means the total number of nonzero entries
-    find_ms(ms, zero_entry, list, number, 0);
+
+    find_ms(ms, zero_entry, list, j - 1, 0);
 
     return 0;
 }
@@ -38,20 +39,36 @@ int main(void)
 void find_ms(int ms[N * N], int zero_entry[N * N], int list[N * N], int number, int start)
 {
     int i, j; // loop index
+    int temp;
+
     if (number == start)
-       show_result(ms);
+       print(ms, N * N);
     else  {
         for (i = start; i < number; i++) {
-            swap(list[start], list[i]);
+            // swap list[i] and list[start]
+            temp = list[start];
+            list[start] = list[i];
+            list[i] = temp;
+            printf("XXX%dXXX\n", k++);
+            printf("start: %d, number: %d\n", start, number);
+            print(list, 8);
+            printf("\n");
             ms[zero_entry[start]] = list[start];
+            print(ms, N * N);
+            
             if (check(ms) == 1)
                 find_ms(ms, zero_entry, list, number, start + 1);
-            swap(list[start], list[i]);
+            // swap list[i] and list[start]
+            temp = list[start];
+            list[start] = list[i];
+            list[i] = temp;
         }
+        ms[zero_entry[start]] = 0;
     }
 }
 
-int check(int ms[N * N]) {
+int check(int ms[N * N]) 
+{
     int i, j;
     int valid;
     int sum;
@@ -88,3 +105,13 @@ int check(int ms[N * N]) {
         return 0;
     return 1;
 } 
+
+void print(int ms[N * N],int length) 
+{
+    int i;
+    for (i = 0; i < length; i++) {
+        printf("%4d", ms[i]);
+        if ((i + 1)% N  == 0)
+            printf("\n");
+    }
+}
